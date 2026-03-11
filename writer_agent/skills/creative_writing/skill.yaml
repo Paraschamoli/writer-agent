@@ -5,20 +5,16 @@ author: paras@getbindu.com
 
 # Description
 description: |
-  AI-powered creative writing assistant that generates complete novels, books, and short story collections.
-  Capable of producing substantial, polished content with proper structure, character development, and narrative flow.
-  Built on the Agno framework with custom writing tools for project management and file organization.
+  AI creative writing assistant that generates short stories and creative content.
+  Uses Agno framework with Moonshot AI (kimi-k2-thinking) or OpenRouter models.
+  Supports project folder creation, markdown file writing, and context compression.
 
 # Tags and Modes
 tags:
   - creative-writing
-  - novel-generation
   - short-stories
-  - book-writing
   - fiction
   - storytelling
-  - literature
-  - content-creation
 
 input_modes:
   - text/plain
@@ -31,65 +27,46 @@ output_modes:
 
 # Example Queries
 examples:
-  - "Create a collection of 5 sci-fi short stories about artificial intelligence and consciousness"
-  - "Write a mystery novel set in Victorian London with 10 chapters, featuring a detective solving murders"
-  - "Generate a comprehensive guide to Python programming with 15 chapters for beginners"
-  - "Create a romance novel set in modern Tokyo with 8 chapters and a happy ending"
-  - "Write a collection of 7 interconnected fantasy stories exploring the theme of magic and technology"
-  - "Create a horror novel with psychological elements set in an abandoned asylum"
-  - "Generate a children's book with 12 chapters about friendship and adventure"
+  - "Write a complete science fiction short story set in the year 2150 where humanity survives in floating cities above Earth after environmental collapse"
+  - "Write a fantasy short story about a hidden kingdom inside a massive mountain range discovered by a wandering cartographer named Elias"
+  - "Create a mystery short story with a clear narrative arc and character development"
 
 # Detailed Capabilities
 capabilities_detail:
   primary_capability:
     supported: true
-    description: "Generates complete, substantial creative writing projects including novels, books, and short story collections"
+    description: "Generates creative writing content using AI models with project organization"
     features:
-      - "Creates organized project folders with sanitized names"
-      - "Writes substantial content (3,000-10,000 words per story/chapter)"
-      - "Manages multiple files with proper naming conventions"
-      - "Supports three writing modes: create, append, overwrite"
-      - "Automatic context compression for long projects"
-      - "Maintains narrative consistency and continuity"
-      - "Generates rich dialogue, descriptions, and character development"
-      - "Handles multiple genres and writing styles"
-    limitations: "Dependent on model token limits and API availability; very long projects may require context compression"
+      - "Project folder creation with sanitized names in output directory"
+      - "Markdown file writing with three modes: create, append, overwrite"
+      - "Context compression for managing long conversations"
+      - "Optional Mem0 memory integration"
+    limitations: "Output length depends on model token limits; context compression triggered automatically when needed"
 
   secondary_capability:
-    supported: true
-    description: "Provides project management and organization for creative writing workflows"
-    features:
-      - "Automatic project folder creation and management"
-      - "Context summarization and compression for long conversations"
-      - "File organization with descriptive naming"
-      - "Progress tracking and state management"
-      - "Support for collaborative writing workflows"
+    supported: false
 
 # Requirements
 requirements:
   packages:
-    - agno>=2.2.0
-    - bindu>=2026.9.4
-    - openai>=2.11.0
-    - python-dotenv>=1.0.1
+    - agno
+    - bindu
+    - python-dotenv
   system:
-    - "File system access for project and file creation"
-    - "Internet access for API communication"
-  min_memory_mb: 512
+    - "File system write access for output directory"
+    - "Internet access for API calls"
+  min_memory_mb: 256
   external_services:
-    - Moonshot AI API (for kimi-k2-thinking model)
+    - Moonshot AI API (kimi models)
     - OpenRouter API (alternative models)
-    - Mem0 API (optional memory features)
+    - Mem0 API (optional)
 
 # Performance Metrics
 performance:
   avg_processing_time_ms: 15000
-  avg_time_per_chapter_ms: 300000
-  max_concurrent_requests: 3
-  memory_per_request_mb: 1024
-  timeout_seconds: 300
-  max_words_per_request: 10000
-  scalability: horizontal
+  max_concurrent_requests: 1
+  memory_per_request_mb: 512
+  scalability: vertical
 
 # Tool Restrictions
 allowed_tools:
@@ -101,112 +78,181 @@ allowed_tools:
 # Rich Documentation
 documentation:
   overview: |
-    The Creative Writing Assistant is an advanced AI agent specialized in generating complete,
-    substantial literary works. Unlike typical content generators that create summaries or outlines,
-    this agent produces full-length novels, books, and short story collections with rich detail,
-    character development, and narrative depth.
-
-    Built on the Agno framework and inspired by the kimi-writer project, it combines the power
-    of the kimi-k2-thinking model with custom tools for project management, file writing, and
-    context compression. The agent can handle long-form writing projects while maintaining
-    conversation continuity and organization.
+    Creative writing agent built on Agno framework using Moonshot AI's kimi-k2-thinking model
+    or OpenRouter models. Provides project management, file writing, and context compression
+    for creative writing tasks. Agent creates organized project folders and writes markdown files
+    with support for create, append, and overwrite modes.
 
   use_cases:
     when_to_use:
-      - "Creating complete novels with multiple chapters and character arcs"
-      - "Generating short story collections with thematic connections"
-      - "Writing comprehensive guides or educational books"
-      - "Developing fiction series with consistent world-building"
-      - "Creating substantial content for publishing or personal use"
-      - "Generating writing samples or portfolio pieces"
-      - "Exploring creative writing ideas with full execution"
+      - "Generating creative short stories with specific requirements"
+      - "Writing fiction with structured narrative arcs"
+      - "Creating organized writing projects with multiple files"
+      - "Tasks requiring project folder management and file organization"
 
     when_not_to_use:
-      - "Generating very short content or summaries (other tools may be more efficient)"
-      - "Technical documentation or API references (use specialized documentation tools)"
-      - "Real-time chat or quick responses (this is designed for substantial content creation)"
-      - "Code generation or programming tasks (use specialized coding assistants)"
-      - "Simple factual questions or information retrieval"
+      - "Real-time chat or conversational interactions"
+      - "Code generation or technical documentation"
+      - "Tasks not requiring file output or project organization"
+      - "Very short content that doesn't need project structure"
 
   input_structure: |
-    The agent accepts natural language requests for creative writing projects.
+    JSON-RPC 2.0 message with text request in parts array.
 
-    Example inputs:
-    - "Write a mystery novel set in 1920s Paris with 8 chapters"
-    - "Create 5 sci-fi short stories about time travel"
-    - "Generate a cookbook with 10 chapters of Italian recipes"
-    - "Write a fantasy novel about a young wizard discovering their powers"
+    Example:
+    {
+      "jsonrpc": "2.0",
+      "method": "message/send",
+      "params": {
+        "message": {
+          "role": "user",
+          "parts": [
+            {
+              "kind": "text",
+              "text": "Write a complete science fiction short story..."
+            }
+          ],
+          "kind": "message",
+          "messageId": "51d7a210-5616-49ad-b187-d93cbb200001",
+          "contextId": "51d7a210-5616-49ad-b187-d93cbb200002",
+          "taskId": "51d7a210-5616-49ad-b187-d93cbb200003"
+        },
+        "skillId": "creative-writing-v1",
+        "configuration": {
+          "acceptedOutputModes": ["application/json"]
+        }
+      },
+      "id": "51d7a210-5616-49ad-b187-d93cbb200003"
+    }
 
-    Constraints:
-    - Requests should specify desired length and structure when possible
-    - Genre and setting preferences help guide the writing style
-    - Specific requirements (themes, character types, plot elements) are welcome
-    - The agent works best with clear, detailed creative briefs
+  output_format: |
+    JSON-RPC 2.0 result with task status, history, and artifacts.
 
-  output_structure: |
-    The agent generates organized writing projects with the following structure:
+    Success Response:
+    {
+      "jsonrpc": "2.0",
+      "id": "51d7a210-5616-49ad-b187-d93cbb200003",
+      "result": {
+        "id": "51d7a210-5616-49ad-b187-d93cbb200003",
+        "context_id": "51d7a210-5616-49ad-b187-d93cbb200002",
+        "kind": "task",
+        "status": {
+          "state": "completed",
+          "timestamp": "2026-03-06T12:14:26.405433+00:00"
+        },
+        "history": [
+          {
+            "role": "user",
+            "parts": [{"kind": "text", "text": "Write a complete science fiction short story..."}]
+          },
+          {
+            "role": "assistant",
+            "parts": [{"kind": "text", "text": "## Story Title\n\nStory content..."}]
+          }
+        ],
+        "artifacts": [
+          {
+            "artifact_id": "4a4401eb-3f33-47ef-9036-704840ba5112",
+            "name": "result",
+            "parts": [{"kind": "text", "text": "## Story Title\n\nStory content..."}]
+          }
+        ]
+      }
+    }
 
-    Project Folder Structure:
-    ```
-    output/project_name/
-    ├── chapter_01.md
-    ├── chapter_02.md
-    ├── story_title.md
-    ├── table_of_contents.md
-    ├── readme.md
-    └── .context_summary_*.md (auto-generated)
-    ```
+  error_handling:
+    - "API failures: Returns error message in response"
+    - "File write errors: Tool returns error message"
+    - "No active project: WriterTool requires create_project first"
+    - "File exists in create mode: Returns error, suggests append or overwrite"
 
-    Content Characteristics:
-    - Substantial length: 3,000-10,000 words per major piece
-    - Complete narratives: No summaries or placeholders
-    - Rich detail: Full dialogue, descriptions, and scenes
-    - Proper formatting: Markdown with clear structure
-    - Genre-appropriate: Style matches the requested category
+  examples:
+    - title: "Science Fiction Short Story"
+      input:
+        parts:
+          - kind: "text"
+            text: "Write a complete science fiction short story set in the year 2150 where humanity survives in floating cities above Earth after environmental collapse. The story must have a mysterious tone and focus on atmospheric world-building. The protagonist is a young orbital engineer named Mira who discovers a hidden transmission inside an abandoned satellite suggesting Earth may still be recoverable. Include emotional character development, a clear narrative arc (beginning, rising conflict, climax, twist ending), and rich descriptions of technology and floating-city life. The story must be self-contained, approximately 1200 words, written in third-person perspective, and suitable for a general adult audience. Do not ask follow-up questions and produce the full story in a single response."
+      output:
+        text: |
+          ## Horizon of the Remnant World
 
-    Quality Standards:
-    - Narrative coherence and continuity
-    - Character development and consistency
-    - Proper pacing and story structure
-    - Engaging dialogue and vivid descriptions
-    - Appropriate tone and style for the genre
+          Mira floated in the thick silence of the control room, her fingers dancing across the holographic interface...
+          [Story continues with complete narrative]
 
-  advanced_features:
-    - "Context Compression: Automatically manages long conversations by summarizing older content"
-    - "Project Management: Creates organized folder structures for complex projects"
-    - "Multi-file Support: Handles novels with multiple chapters or story collections"
-    - "Recovery Capabilities: Can resume interrupted projects from context summaries"
-    - "Memory Integration: Optional Mem0 integration for persistent project memory"
-    - "Flexible Writing Modes: Create new files, append existing content, or overwrite when needed"
+    - title: "Fantasy Short Story"
+      input:
+        parts:
+          - kind: "text"
+            text: "Write a fantasy short story about a hidden kingdom inside a massive mountain range discovered by a wandering cartographer named Elias. The tone must be adventurous and mysterious. Include detailed descriptions of the landscape, ancient architecture, and the culture of the hidden civilization. Structure the story with a clear beginning, conflict, climax, and resolution. The story should be written in third-person narrative style, approximately 1000 words long, suitable for fantasy readers, and contain vivid world-building and character dialogue. Produce the complete story in a single response and do not ask for additional clarification."
+      output:
+        text: |
+          ## The Lost Cartography of Elias
+
+          Elias had always been drawn to the unknown, to places unmarked on any map...
+          [Story continues with complete narrative]
 
   best_practices:
-    - "Be specific about desired length, structure, and style"
-    - "Provide clear genre and setting preferences"
-    - "Include any specific themes or elements you want emphasized"
-    - "Let the agent work autonomously - it will plan and execute the full project"
-    - "Check the output folder for generated files during the process"
-    - "Use recovery mode if the agent is interrupted during long projects"
+    for_developers:
+      - "Initialize agent with model selection (kimi-k2-thinking or OpenRouter models)"
+      - "Provide MOONSHOT_API_KEY or OPENROUTER_API_KEY environment variables"
+      - "Optional MEM0_API_KEY for memory features"
+      - "Agent uses async handler with lazy initialization"
 
-  troubleshooting:
-    common_issues:
-      - "Incomplete content: Ensure you're requesting substantial works, not summaries"
-      - "File organization: Check the output folder for all generated files"
-      - "Context limits: The agent automatically compresses context for long projects"
-      - "Interruptions: Use context summaries to resume interrupted work"
-      - "Quality concerns: The agent writes complete works - allow time for full generation"
+    for_orchestrators:
+      - "Route creative writing requests to this skill"
+      - "Expect async task processing with submitted/completed states"
+      - "Agent returns markdown-formatted stories in response"
+      - "Processing time varies based on content length and model"
+      - "Single active project folder at a time"
 
-    recovery_instructions:
-      - "If interrupted, check for .context_summary_*.md files in the project folder"
-      - "Restart the agent with the same project context"
-      - "The agent will continue from where it left off using saved summaries"
+  installation: |
+    Install dependencies and configure environment variables.
 
-# Integration Notes
-integration_notes: |
-  This skill integrates seamlessly with the Bindu agent framework and can be deployed
-  as a standalone service or as part of a larger agent ecosystem. The custom tools
-  are designed to work with the Agno framework's tool system while maintaining
-  compatibility with standard Bindu deployment patterns.
+    Environment variables:
+    MOONSHOT_API_KEY=<moonshot-api-key> (optional, for kimi models)
+    OPENROUTER_API_KEY=<openrouter-api-key> (required if not using Moonshot)
+    MEM0_API_KEY=<mem0-api-key> (optional)
+    MODEL_NAME=kimi-k2-thinking (default)
 
-  The agent supports both Moonshot AI (for optimal kimi-k2-thinking performance) and
-  OpenRouter (for alternative model access), making it flexible for different deployment
-  scenarios and budget considerations.
+    Run:
+    python -m writer_agent.main
+
+    Server runs on http://0.0.0.0:3773 by default.
+
+  versioning:
+    - version: "1.0.0"
+      date: "2026-03-11"
+      changes: "Initial release with Agno framework, project management, file writing, and context compression"
+
+# Assessment fields for skill negotiation
+assessment:
+  keywords:
+    - "creative writing"
+    - "story"
+    - "fiction"
+    - "narrative"
+    - "write"
+    - "short story"
+
+  specializations:
+    - domain: "creative-writing"
+      confidence_boost: 0.4
+    - domain: "fiction"
+      confidence_boost: 0.3
+
+  anti_patterns:
+    - "Real-time chat"
+    - "Code generation"
+    - "Technical documentation"
+    - "Data analysis"
+
+  complexity_indicators:
+    simple:
+      - "Write a short story"
+      - "Create a simple narrative"
+    medium:
+      - "Write a story with specific requirements and structure"
+      - "Create fiction with character development and plot arc"
+    complex:
+      - "Generate multi-chapter novels with detailed world-building"
+      - "Create interconnected story collections with thematic elements"

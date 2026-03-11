@@ -1,7 +1,7 @@
 {
   "author": "paras@getbindu.com",
   "name": "writer-agent",
-  "description": "An autonomous agent powered by the **kimi-k2-thinking** model for creating novels, books, and short story collections.",
+  "description": "An autonomous agent powered by OpenRouter models for creating novels, books, and short story collections.",
   "version": "1.0.0",
   "recreate_keys": false,
   "skills": [
@@ -24,11 +24,6 @@
   },
   "num_history_sessions": 5,
   "environment_variables": [
-    {
-      "key": "MOONSHOT_API_KEY",
-      "description": "Moonshot API key for kimi-k2-thinking model (recommended for best performance)",
-      "required": false
-    },
     {
       "key": "OPENROUTER_API_KEY",
       "description": "OpenRouter API key for LLM calls",

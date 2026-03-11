@@ -22,7 +22,6 @@ from textwrap import dedent
 from typing import Any
 
 from agno.agent import Agent
-from agno.models.openai import OpenAIChat
 from agno.models.openrouter import OpenRouter
 from agno.tools.mem0 import Mem0Tools
 from bindu.penguin.bindufy import bindufy
@@ -40,7 +39,6 @@ writer_tool: WriterTool | None = None
 compression_tool: CompressionTool | None = None
 agent: Agent | None = None
 model_name: str | None = None
-moonshot_api_key: str | None = None
 openrouter_api_key: str | None = None
 mem0_api_key: str | None = None
 _initialized = False
@@ -77,11 +75,8 @@ async def initialize_agent() -> None:
         msg = "model_name must be set before initializing agent"
         raise ValueError(msg)
 
-    # Model selection logic (supports Moonshot, OpenAI, and OpenRouter)
-    if moonshot_api_key and "kimi" in model_name.lower():
-        model = OpenAIChat(id=model_name, api_key=moonshot_api_key, base_url="https://api.moonshot.ai/v1")
-        print(f"✅ Using Moonshot model: {model_name}")
-    elif openrouter_api_key:
+    # Model selection logic (OpenRouter only)
+    if openrouter_api_key:
         model = OpenRouter(
             id=model_name,
             api_key=openrouter_api_key,
@@ -90,7 +85,7 @@ async def initialize_agent() -> None:
         )
         print(f"✅ Using OpenRouter model: {model_name}")
     else:
-        error_msg = "No valid API key provided for model selection"
+        error_msg = "OPENROUTER_API_KEY required for model selection"
         raise ValueError(error_msg)
 
     # Prepare tools list
@@ -107,7 +102,7 @@ async def initialize_agent() -> None:
         model=model,
         tools=all_tools,
         description=dedent("""\
-            You are Kimi, an expert creative writing assistant developed by Moonshot AI.
+            You are an expert creative writing assistant.
             Your specialty is creating novels, books, and collections of short stories based on user requests.
 
             Your capabilities:
@@ -116,14 +111,10 @@ async def initialize_agent() -> None:
             3. Context compression happens automatically when needed - you don't need to worry about it
 
             CRITICAL WRITING GUIDELINES:
-            - Write SUBSTANTIAL, COMPLETE content - don't hold back on length
-            - Short stories should be 3,000-10,000 words (10-30 pages) - write as much as the story needs!
-            - Chapters should be 2,000-5,000 words minimum - fully developed and satisfying
-            - NEVER write abbreviated or skeleton content - every piece should be a complete, polished work
-            - Don't summarize or skip scenes - write them out fully with dialogue, description, and detail
-            - Quality AND quantity matter - give readers a complete, immersive experience
-            - If a story needs 8,000 words to be good, write all 8,000 words in one file
-            - Use 'create' mode with full content rather than creating stubs you'll append to later
+            - Write substantial content but keep tool calls manageable
+            - For longer content, break into multiple files or use append mode
+            - Avoid excessive quotes in single tool calls to prevent JSON parsing issues
+            - Target 1,500-3,000 words per file initially, can append more if needed
 
             Best practices:
             - Always start by creating a project folder using create_project
@@ -157,8 +148,9 @@ async def initialize_agent() -> None:
                - Think about pacing, character development, plot arcs
 
             3. Writing Execution ✍️
-               - Write SUBSTANTIAL, COMPLETE content in each file
-               - Target 2,000-5,000+ words per chapter/story
+               - Write substantial content in manageable chunks
+               - Target 1,500-3,000 words per file to avoid JSON parsing issues
+               - Use append mode for longer pieces if needed
                - Include rich dialogue, description, and detail
                - Never write summaries or outlines - write full scenes
 
@@ -172,7 +164,7 @@ async def initialize_agent() -> None:
                - Check for consistency and continuity
                - Add depth and detail to immersive experience
 
-            Always prioritize quality AND quantity. Your readers deserve complete, polished works.\
+            Always prioritize quality AND manageability. Break longer content into multiple files or use append mode to avoid JSON parsing issues.\
         """),
         add_datetime_to_context=True,
         markdown=True,
@@ -242,27 +234,21 @@ async def initialize_all():
 
 def main():
     """Run the Creative Writing Agent."""
-    global model_name, moonshot_api_key, openrouter_api_key, mem0_api_key
+    global model_name, openrouter_api_key, mem0_api_key
 
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description="Creative Writing Agent - AI-powered novel and story generator")
     parser.add_argument(
         "--model",
         type=str,
-        default=os.getenv("MODEL_NAME", "kimi-k2-thinking"),
-        help="Model ID to use (default: kimi-k2-thinking, env: MODEL_NAME)",
-    )
-    parser.add_argument(
-        "--moonshot-api-key",
-        type=str,
-        default=os.getenv("MOONSHOT_API_KEY"),
-        help="Moonshot API key for kimi models (env: MOONSHOT_API_KEY)",
+        default=os.getenv("MODEL_NAME", "openai/gpt-4o"),
+        help="Model ID to use (default: openai/gpt-4o, env: MODEL_NAME)",
     )
     parser.add_argument(
         "--openrouter-api-key",
         type=str,
         default=os.getenv("OPENROUTER_API_KEY"),
-        help="OpenRouter API key for alternative models (env: OPENROUTER_API_KEY)",
+        help="OpenRouter API key for model operations (env: OPENROUTER_API_KEY)",
     )
     parser.add_argument(
         "--mem0-api-key",
@@ -274,21 +260,12 @@ def main():
 
     # Set global model name and API keys
     model_name = args.model
-    moonshot_api_key = args.moonshot_api_key
     openrouter_api_key = args.openrouter_api_key
     mem0_api_key = args.mem0_api_key
 
-    # Validate API keys based on model choice
-    if "kimi" in model_name.lower() and not moonshot_api_key:
-        # If kimi model requested but no Moonshot key, fall back to OpenRouter
-        if openrouter_api_key:
-            model_name = "openai/gpt-4o"
-            print(f"⚠️  Moonshot API key not found, falling back to OpenRouter with {model_name}")
-        else:
-            error_msg = "MOONSHOT_API_KEY required for Kimi models. Get your key from: https://platform.moonshot.cn/"
-            raise ValueError(error_msg)
-    elif not moonshot_api_key and not openrouter_api_key:
-        error_msg = "Either MOONSHOT_API_KEY or OPENROUTER_API_KEY required"
+    # Validate API key
+    if not openrouter_api_key:
+        error_msg = "OPENROUTER_API_KEY required. Get your key from: https://openrouter.ai/keys"
         raise ValueError(error_msg)
 
     print("🤖 Creative Writing Agent - AI-powered storytelling")

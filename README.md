@@ -6,12 +6,12 @@
 <h3 align="center">AI-Powered Creative Writing Assistant</h3>
 
 <p align="center">
-  <strong>Autonomous agent for generating complete novels, books, and short story collections using the kimi-k2-thinking model</strong>
+  <strong>AI agent for generating creative short stories and fiction using Moonshot AI or OpenRouter models</strong>
 </p>
 
 <p align="center">
-  <a href="https://github.com/Paraschamoli/writer-agent/actions/workflows/main.yml?query=branch%3Amain">
-    <img src="https://img.shields.io/github/actions/workflow/status/Paraschamoli/writer-agent/main.yml?branch=main" alt="Build status">
+  <a href="https://github.com/Paraschamoli/writer-agent/actions/workflows/build-and-push.yml?query=branch%3Amain">
+    <img src="https://img.shields.io/github/actions/workflow/status/Paraschamoli/writer-agent/build-and-push.yml?branch=main" alt="Build status">
   </a>
   <a href="https://img.shields.io/github/license/Paraschamoli/writer-agent">
     <img src="https://img.shields.io/github/license/Paraschamoli/writer-agent" alt="License">
@@ -23,15 +23,15 @@
 
 ## 📖 Overview
 
-The Writer Agent is an advanced AI-powered creative writing assistant that generates **complete, substantial** literary works. Built on the [Bindu Agent Framework](https://github.com/getbindu/bindu) with the Agno framework, it combines the power of the kimi-k2-thinking model with custom tools for project management and file organization.
+The Writer Agent is an AI creative writing assistant built on the [Bindu Agent Framework](https://github.com/getbindu/bindu) using the Agno framework. It generates creative fiction and short stories with project organization and file management capabilities.
 
-**Key Capabilities:**
-- � **Complete Novel Generation**: Creates full-length novels with proper structure and character development
-- 📖 **Short Story Collections**: Generates themed collections with interconnected narratives
-- 📝 **Book Creation**: Produces comprehensive guides and educational content
-- 🗂️ **Project Management**: Organized folder structure with automatic file management
-- 🔄 **Context Compression**: Handles long projects with intelligent memory management
-- ⚡ **Real-time Generation**: Stream content creation with progress tracking
+**Key Features:**
+- ✍️ **Creative Story Generation**: Creates complete short stories with narrative structure
+- 🗂️ **Project Management**: Organized folder structure with sanitized naming
+- 📝 **Markdown File Writing**: Three modes (create, append, overwrite) for content management
+- 🔄 **Context Compression**: Manages long conversations with automatic summarization
+- 🧠 **Optional Memory**: Mem0 integration for persistent context
+- ⚡ **Flexible Models**: Supports Moonshot AI (kimi-k2-thinking) or OpenRouter models
 
 ---
 
@@ -67,13 +67,13 @@ Edit `.env` and add your API keys:
 
 | Key | Get It From | Required |
 |-----|-------------|----------|
-| `MOONSHOT_API_KEY` | [Moonshot AI Platform](https://platform.moonshot.cn/) | ✅ Recommended |
+| `MOONSHOT_API_KEY` | [Moonshot AI Platform](https://platform.moonshot.cn/) | ✅ For kimi models |
 | `OPENROUTER_API_KEY` | [OpenRouter](https://openrouter.ai/keys) | ✅ Alternative |
 | `MODEL_NAME` | Custom model name | Optional (default: kimi-k2-thinking) |
 | `MEM0_API_KEY` | [Mem0 Dashboard](https://app.mem0.ai/dashboard/api-keys) | Optional |
 
 **Model Options:**
-- **Recommended**: `kimi-k2-thinking` with Moonshot API (best for creative writing)
+- **Recommended**: `kimi-k2-thinking` with Moonshot API
 - **Alternative**: Any OpenRouter model (e.g., `openai/gpt-4o`)
 
 ### Run the Agent
@@ -82,7 +82,7 @@ Edit `.env` and add your API keys:
 # Start the agent
 uv run python -m writer_agent
 
-# Agent will be available at http://localhost:3773
+# Agent will be available at http://0.0.0.0:3773
 ```
 
 ### Github Setup
@@ -104,73 +104,87 @@ gh repo create Paraschamoli/writer-agent --public --source=. --remote=origin --p
 ### Example Queries
 
 ```bash
-# Novel Generation
-"Create a mystery novel set in Victorian London with 10 chapters, featuring a detective solving a series of murders"
+# Science Fiction Story
+"Write a complete science fiction short story set in the year 2150 where humanity survives in floating cities above Earth after environmental collapse. The story must have a mysterious tone and focus on atmospheric world-building. The protagonist is a young orbital engineer named Mira who discovers a hidden transmission inside an abandoned satellite suggesting Earth may still be recoverable. Include emotional character development, a clear narrative arc (beginning, rising conflict, climax, twist ending), and rich descriptions of technology and floating-city life. The story must be self-contained, approximately 1200 words, written in third-person perspective, and suitable for a general adult audience."
 
-# Short Story Collection
-"Write a collection of 5 sci-fi short stories about artificial intelligence and consciousness, each exploring different aspects"
+# Fantasy Story
+"Write a fantasy short story about a hidden kingdom inside a massive mountain range discovered by a wandering cartographer named Elias. The tone must be adventurous and mysterious. Include detailed descriptions of the landscape, ancient architecture, and the culture of the hidden civilization. Structure the story with a clear beginning, conflict, climax, and resolution. The story should be written in third-person narrative style, approximately 1000 words long, suitable for fantasy readers, and contain vivid world-building and character dialogue."
 
-# Educational Book
-"Generate a comprehensive guide to Python programming with 15 chapters for absolute beginners"
-
-# Romance Novel
-"Create a romance novel set in modern Tokyo with 8 chapters about two people from different cultures finding love"
-
-# Fantasy Series
-"Write a fantasy novel about a young wizard discovering their powers, with 12 chapters and magical world-building"
-```
-
-### Input Formats
-
-**Plain Text:**
-```
-Create a collection of 7 interconnected horror stories set in an abandoned asylum
-```
-
-**JSON:**
-```json
-{
-  "messages": [
-    {
-      "role": "user",
-      "content": "Write a thriller novel with 8 chapters about a detective hunting a serial killer"
-    }
-  ]
-}
+# Mystery Story
+"Create a mystery short story with a clear narrative arc and character development"
 ```
 
 ### Output Structure
 
-The agent generates organized writing projects:
+The agent generates organized writing projects in the `output/` directory:
 
 ```
 output/your_project_name/
-├── chapter_01.md          # Complete chapter (3,000-5,000 words)
-├── chapter_02.md          # Next chapter
-├── story_title.md         # Short stories (3,000-10,000 words)
-├── table_of_contents.md   # Project overview
+├── story_title.md         # Complete story in markdown
+├── chapter_01.md          # If multi-file project
 ├── readme.md              # Project information
-└── .context_summary_*.md  # Auto-saved context backups
+└── .context_summary_*.md  # Auto-saved context (if needed)
 ```
 
 **Content Characteristics:**
-- **Substantial Length**: 3,000-10,000 words per major piece
-- **Complete Narratives**: No summaries or placeholders
-- **Rich Detail**: Full dialogue, descriptions, and scenes
-- **Proper Structure**: Chapter divisions, character development, plot arcs
+- Markdown-formatted output
+- Complete narratives with proper structure
+- Character development and dialogue
+- Genre-appropriate tone and style
 
 ---
 
 ## 🔌 API Usage
 
-The agent exposes a RESTful API when running. Default endpoint: `http://localhost:3773`
+The agent exposes a JSON-RPC 2.0 API when running. Default endpoint: `http://0.0.0.0:3773`
 
-### Quick Start
+### Send Message to Agent
 
-For complete API documentation, request/response formats, and examples, visit:
+```bash
+curl --location 'http://localhost:3773' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {{api_key}}' \
+--data '{
+  "jsonrpc": "2.0",
+  "method": "message/send",
+  "params": {
+    "message": {
+      "role": "user",
+      "kind": "message",
+      "messageId": "51d7a210-5616-49ad-b187-d93cbb200001",
+      "contextId": "51d7a210-5616-49ad-b187-d93cbb200002",
+      "taskId": "51d7a210-5616-49ad-b187-d93cbb200003",
+      "parts": [
+        {
+          "kind": "text",
+          "text": "Write a complete science fiction short story..."
+        }
+      ]
+    },
+    "skillId": "creative-writing-v1",
+    "configuration": {
+      "acceptedOutputModes": ["application/json"]
+    }
+  },
+  "id": "51d7a210-5616-49ad-b187-d93cbb200003"
+}'
+```
 
-📚 **[Bindu API Reference - Send Message to Agent](https://docs.getbindu.com/api-reference/all-the-tasks/send-message-to-agent)**
+### Get Task Status
 
+```bash
+curl --location 'http://localhost:3773' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {{api_key}}' \
+--data '{
+  "jsonrpc": "2.0",
+  "method": "tasks/get",
+  "params": {
+    "taskId": "51d7a210-5616-49ad-b187-d93cbb200003"
+  },
+  "id": "51d7a210-5616-49ad-b187-d93cbb200004"
+}'
+```
 
 ### Additional Resources
 
@@ -185,34 +199,32 @@ For complete API documentation, request/response formats, and examples, visit:
 ### Creative Writing (v1.0.0)
 
 **Primary Capability:**
-- Generates complete, substantial creative writing projects including novels, books, and short story collections
-- Produces polished, publication-ready content with proper narrative structure and character development
+- Generates creative writing content using AI models with project organization
+- Supports project folder creation, markdown file writing, and context compression
 
 **Features:**
-- **Project Management**: Creates organized folder structures with sanitized names
-- **Substantial Content**: Writes 3,000-10,000 words per story/chapter with rich detail
-- **Multiple Writing Modes**: Create new files, append existing content, or overwrite when needed
-- **Context Compression**: Automatically manages long conversations with intelligent summarization
-- **File Organization**: Proper naming conventions and logical structure for complex projects
-- **Genre Flexibility**: Handles mystery, sci-fi, romance, fantasy, horror, educational content, and more
+- **Project Folders**: Creates organized directories with sanitized names in `output/`
+- **File Writing**: Three modes - create new files, append to existing, or overwrite
+- **Context Management**: Automatic compression for long conversations
+- **Memory Integration**: Optional Mem0 support for persistent context
+- **Genre Flexibility**: Handles sci-fi, fantasy, mystery, and other fiction genres
 
 **Best Used For:**
-- **Novel Writing**: Multi-chapter books with character arcs and plot development
-- **Short Story Collections**: Themed anthologies with interconnected narratives
-- **Educational Content**: Comprehensive guides and instructional books
-- **Creative Projects**: Any substantial writing requiring organization and quality
+- Generating creative short stories with specific requirements
+- Writing fiction with structured narrative arcs
+- Creating organized writing projects with multiple files
+- Tasks requiring project folder management and file organization
 
 **Not Suitable For:**
-- Very short content or summaries (other tools may be more efficient)
-- Technical documentation or API references
-- Real-time chat or quick responses
-- Code generation or programming tasks
+- Real-time chat or conversational interactions
+- Code generation or technical documentation
+- Tasks not requiring file output or project organization
+- Very short content that doesn't need project structure
 
 **Performance:**
-- Average processing time: ~15-30 seconds per chapter
-- Max concurrent requests: 3
-- Memory per request: 1GB
-- Words per request: 3,000-10,000
+- Average processing time: ~15 seconds
+- Memory per request: 512MB
+- Output: Markdown-formatted stories
 
 ---
 
@@ -230,8 +242,7 @@ docker-compose up --build
 ### Docker Configuration
 
 The agent runs on port `3773` and requires:
-- `MOONSHOT_API_KEY` environment variable (recommended)
-- `OPENROUTER_API_KEY` environment variable (alternative)
+- `MOONSHOT_API_KEY` or `OPENROUTER_API_KEY` environment variable
 - `MODEL_NAME` environment variable (optional)
 - `MEM0_API_KEY` environment variable (optional)
 
@@ -277,6 +288,7 @@ GitHub Actions will automatically:
 2. Create Docker container
 3. Push to Docker Hub
 4. Register on bindus.directory
+5. Deploy to Argo CD
 
 ---
 
@@ -289,22 +301,22 @@ writer-agent/
 ├── writer_agent/
 │   ├── tools/                      # Custom writing tools
 │   │   ├── __init__.py
-│   │   ├── project.py             # Project management tool
-│   │   ├── writer.py              # File writing tool
-│   │   └── compression.py         # Context management tool
+│   │   ├── project.py             # Project folder management
+│   │   ├── writer.py              # Markdown file writing
+│   │   └── compression.py         # Context compression
 │   ├── skills/
-│   │   └── creative_writing/       # Updated skill configuration
+│   │   └── creative_writing/       # Skill configuration
 │   │       └── skill.yaml
 │   ├── __init__.py
 │   ├── __main__.py
-│   ├── main.py                     # Updated agent with kimi-k2-thinking
-│   └── agent_config.json           # Updated configuration
+│   ├── main.py                     # Agent implementation
+│   └── agent_config.json           # Agent configuration
 ├── tests/
 │   └── test_main.py
 ├── .env.example
 ├── docker-compose.yml
 ├── Dockerfile.agent
-├── pyproject.toml                 # Updated dependencies
+├── pyproject.toml
 └── output/                         # Generated projects (created during use)
 ```
 
@@ -391,6 +403,3 @@ uvx cookiecutter https://github.com/getbindu/create-bindu-agent.git
   <a href="https://discord.gg/3w5zuYUuwt">💬 Join Discord</a> •
   <a href="https://bindus.directory">🌐 Agent Directory</a>
 </p>
-
-#   w r i t e r - a g e n t  
- 

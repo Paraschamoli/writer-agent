@@ -6,7 +6,6 @@ in the active project folder.
 """
 
 import base64
-import json
 from pathlib import Path
 from typing import Literal
 
@@ -30,27 +29,27 @@ class WriterTool(Toolkit):
     def encode_content(self, content: str) -> str:
         """
         Encode content using base64 to prevent JSON parsing issues.
-        
+
         Args:
             content: Raw content from the agent
-            
+
         Returns:
             Base64 encoded content safe for JSON processing
         """
-        return base64.b64encode(content.encode('utf-8')).decode('utf-8')
+        return base64.b64encode(content.encode("utf-8")).decode("utf-8")
 
     def decode_content(self, encoded_content: str) -> str:
         """
         Decode base64 content back to original text.
-        
+
         Args:
             encoded_content: Base64 encoded content
-            
+
         Returns:
             Original decoded content
         """
         try:
-            return base64.b64decode(encoded_content.encode('utf-8')).decode('utf-8')
+            return base64.b64decode(encoded_content.encode("utf-8")).decode("utf-8")
         except Exception:
             # If decoding fails, return as-is
             return encoded_content
@@ -70,7 +69,7 @@ class WriterTool(Toolkit):
         try:
             # Decode content if it's base64 encoded
             content = self.decode_content(content)
-            
+
             # Check if project folder is initialized
             project_folder = self.project_tool.get_active_project_folder()
             if not project_folder:
